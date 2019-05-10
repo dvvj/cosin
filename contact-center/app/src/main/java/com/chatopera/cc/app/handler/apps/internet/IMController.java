@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -323,10 +324,17 @@ public class IMController extends Handler {
         return retSseEmitter;
     }
 
+    private static String userAtCompany(String user, String company) {
+        return String.format("%s@%s", user, company);
+    }
+    private final static String userNotLoggedIn = "未登录用户";
+
     @RequestMapping("/index")
     @Menu(type = "im", subtype = "index", access = true)
     public ModelAndView index(ModelMap map, HttpServletRequest request,
                               HttpServletResponse response,
+                              @Valid String c_user,
+                              @Valid String c_company,
                               @Valid String orgi,
                               @Valid String aiid,
                               @Valid String traceid,
@@ -359,7 +367,9 @@ public class IMController extends Handler {
             } else {
                 userID = MainUtils.genIDByKey(sessionid);
             }
-            String nickname = "Guest_" + userID;
+            //String nickname = "Guest_" + userID;
+            String nickname = StringUtils.isNotBlank(c_user) ?
+              userAtCompany(c_user, c_company) : userNotLoggedIn;
             boolean consult = true;                //是否已收集用户信息
             SessionConfig sessionConfig = AutomaticServiceDist.initSessionConfig(orgi);
 
@@ -496,7 +506,8 @@ public class IMController extends Handler {
                     if (contacts != null && StringUtils.isNotBlank(contacts.getName())) {
                         nickname = contacts.getName();
                     }
-                    map.addAttribute("username", nickname);
+                    //map.addAttribute("username", nickname);
+                    map.addAttribute("username", URLEncoder.encode(nickname, StandardCharsets.UTF_8.name()));
                     if (MainContext.model.get("chatbot") != null &&
                             StringUtils.isNotBlank(invite.getAiid()) &&
                             invite.isAi() &&
