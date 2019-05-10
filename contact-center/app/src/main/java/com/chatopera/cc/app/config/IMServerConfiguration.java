@@ -74,7 +74,7 @@ public class IMServerConfiguration
     {  
     	Configuration config = new Configuration();
 //		config.setHostname("localhost");
-		config.setPort(port);
+		config.setPort(getWebIMPort());
 		
 //		config.getSocketConfig().setReuseAddress(true);
 //		config.setSocketConfig(new SocketConfig());
