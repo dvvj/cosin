@@ -54,8 +54,10 @@ public class IMServerConfiguration
     @Value("${web.upload-path}")
     private String path;
 
-    @Value("${server.ssl.key-store}")
-    private String keyStorePath;
+	@Value("${server.ssl.key-store}")
+	private String keyStorePath;
+	@Value("${server.ssl.key-store-password}")
+	private String keyStorePass;
 
     @Value("${uk.im.server.threads}")
     private String threads;
@@ -98,7 +100,7 @@ public class IMServerConfiguration
 //        	}
 //        }
 
-			config.setKeyStorePassword("123456");
+			config.setKeyStorePassword(keyStorePass);
 			URL url = new URL(keyStorePath);
 //InputStream stream = SslChatLauncher.class.getResourceAsStream("/keystore.jks");
 			config.setKeyStore(url.openStream());
