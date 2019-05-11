@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
@@ -52,7 +53,10 @@ public class IMServerConfiguration
 
     @Value("${web.upload-path}")
     private String path;
-    
+
+    @Value("${server.ssl.key-store}")
+    private String keyStorePath;
+
     @Value("${uk.im.server.threads}")
     private String threads;
     
@@ -81,19 +85,23 @@ public class IMServerConfiguration
 //		config.setOrigin("*");
 		config.setExceptionListener(new UCKeFuExceptionListener());
 		
-		File sslFile = new File(path , "ssl/https.properties") ;
-        if(sslFile.exists()){
-        	Properties sslProperties = new Properties();
-        	FileInputStream in = new FileInputStream(sslFile);
-        	sslProperties.load(in);
-        	in.close();
-        	if(StringUtils.isNotBlank(sslProperties.getProperty("key-store")) && StringUtils.isNotBlank(sslProperties.getProperty("key-store-password"))){
-        		config.setKeyStorePassword(MainUtils.decryption(sslProperties.getProperty("key-store-password")));
-        	    InputStream stream = new FileInputStream(new File(path , "ssl/"+sslProperties.getProperty("key-store")));
-        	    config.setKeyStore(stream);
-        	}
-        }
-		
+//		File sslFile = new File(path , "ssl/https.properties") ;
+//        if(sslFile.exists()){
+//        	Properties sslProperties = new Properties();
+//        	FileInputStream in = new FileInputStream(sslFile);
+//        	sslProperties.load(in);
+//        	in.close();
+//        	if(StringUtils.isNotBlank(sslProperties.getProperty("key-store")) && StringUtils.isNotBlank(sslProperties.getProperty("key-store-password"))){
+//        		config.setKeyStorePassword(MainUtils.decryption(sslProperties.getProperty("key-store-password")));
+//        	    InputStream stream = new FileInputStream(new File(path , "ssl/"+sslProperties.getProperty("key-store")));
+//        	    config.setKeyStore(stream);
+//        	}
+//        }
+
+			config.setKeyStorePassword("123456");
+			URL url = new URL(keyStorePath);
+//InputStream stream = SslChatLauncher.class.getResourceAsStream("/keystore.jks");
+			config.setKeyStore(url.openStream());
 		
 //	    config.setSSLProtocol("https");
 		int workThreads = StringUtils.isNotBlank(threads) && threads.matches("[\\d]{1,6}") ? Integer.parseInt(threads) : 100 ;

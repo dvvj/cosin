@@ -1,1 +1,1 @@
-docker-compose run --service-ports --name ${1}_1 $1
+docker-compose run -d --service-ports --name ${1}_1 $1
