@@ -100,10 +100,12 @@ public class IMServerConfiguration
 //        	}
 //        }
 
-			config.setKeyStorePassword(keyStorePass);
-			URL url = new URL(keyStorePath);
+			if (sslPort != null) {
+				config.setKeyStorePassword(keyStorePass);
+				URL url = new URL(keyStorePath);
 //InputStream stream = SslChatLauncher.class.getResourceAsStream("/keystore.jks");
-			config.setKeyStore(url.openStream());
+				config.setKeyStore(url.openStream());
+			}
 		
 //	    config.setSSLProtocol("https");
 		int workThreads = StringUtils.isNotBlank(threads) && threads.matches("[\\d]{1,6}") ? Integer.parseInt(threads) : 100 ;
