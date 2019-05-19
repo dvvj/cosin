@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <!-- META -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="html2canvas.min.js"></script>
+    <script src="kindeditor-min.js"></script>
+
+<style>
+.ke-icon-example1 {
+				background-image: url(themes/default/default.png);
+				background-position: 0px -672px;
+				width: 16px;
+				height: 16px;
+			}
+</style>
+<script type="text/javascript">
+			// 自定义插件 #1
+			KindEditor.lang({
+				example1 : '插入HTML'
+			});
+			KindEditor.plugin('example1', function(K) {
+				var self = this, name = 'example1';
+				self.clickToolbar(name, function() {
+					self.insertHtml('<strong>测试内容</strong>');
+				});
+			});
+
+
+KindEditor.ready(function(K) {
+  K.create('#content1', {
+    items : ['example1']
+  });
+});
+</script>
+
+</head>
+<body>
+
+<div id="capture" style="padding: 10px; background: #f5da55">
+    <h4 style="color: #000; ">Hello world!</h4>
+</div>
+KindEditor演示: 自定义插件
+
+<textarea id="content1" name="content" style="width:700px;height:200px;visibility:hidden;"></textarea>
+
+</body>
+</html>
