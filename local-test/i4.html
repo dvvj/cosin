@@ -7,16 +7,22 @@
     <script src="html2canvas.min.js"></script>
 
 <script type="text/javascript">
+let storageObj = localStorage;
+let screenCapKey = 'screenCaptured';
 let loadCaptured = function() {
-console.log("sessionStorage: ", sessionStorage);
-console.log("sessionStorage.save: ", sessionStorage.saved);
-//console.log("sessionStorage.screenCaptured: ", sessionStorage.screenCaptured);
-let dataURL = sessionStorage.getItem('screenCaptured');
+console.log("storage: ", storageObj);
+let dataURL = storageObj.getItem(screenCapKey);
 console.log('dataURL: ', dataURL);
 let img = new Image;
 img.src = dataURL;
 document.body.appendChild(img);
+storageObj.removeItem(screenCapKey);
+console.log("storage after removeItem: ", storageObj);
 };
+
+window.addEventListener('storage', function(e) {
+ console.log('storage event: ', e);
+});
 </script>
 <body onload='loadCaptured()'>
 web storage tests (i4)

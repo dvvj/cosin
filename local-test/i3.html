@@ -15,16 +15,16 @@ let initUserInfo = function (userInfo) {
 
 initUserInfo({ name: 'user1', company: 'company1' });
 
+let storageObj = localStorage;
 let doCapture = function() {
 html2canvas(document.body).then(function(canvas) {
     //document.body.appendChild(canvas);
-  sessionStorage.setItem('screenCaptured', canvas.toDataURL());
+  storageObj.setItem('screenCaptured', canvas.toDataURL());
   alert('captured');
 });
 };
 
-console.log("sessionStorage: ", sessionStorage);
-sessionStorage.saved = 'saved test';
+console.log("storage: ", storageObj);
 </script>
 <body>
 <input type='button' value='capture' onclick='doCapture();' />
