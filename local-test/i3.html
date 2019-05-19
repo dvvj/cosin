@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <!-- META -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="html2canvas.min.js"></script>
+
+<script type="text/javascript">
+
+let initUserInfo = function (userInfo) {
+  console.log(userInfo);
+  window.userInfo = userInfo;
+};
+
+initUserInfo({ name: 'user1', company: 'company1' });
+
+let doCapture = function() {
+html2canvas(document.body).then(function(canvas) {
+    //document.body.appendChild(canvas);
+  sessionStorage.setItem('screenCaptured', canvas.toDataURL());
+  alert('captured');
+});
+};
+
+console.log("sessionStorage: ", sessionStorage);
+sessionStorage.saved = 'saved test';
+</script>
+<body>
+<input type='button' value='capture' onclick='doCapture();' />
+<input type='button' value='new window' onclick='window.open("https://localhost/i4.html")' />
+
+<div id="capture" style="padding: 10px; background: #f5da55">
+    <h4 style="color: #000; ">Hello world!</h4>
+</div>
+web storage tests
+</body>
+</html>
