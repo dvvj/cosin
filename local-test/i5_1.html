@@ -30,9 +30,9 @@ let loadCaptured = function() {
   return dataURL;
 };
 
-window.addEventListener('storage', function(e) {
- console.log('storage event: ', e);
-});
+//window.addEventListener('storage', function(e) {
+// console.log('storage event: ', e);
+//});
 
 
 			// 自定义插件 #1
@@ -40,15 +40,20 @@ KindEditor.lang({
   example1 : '插入HTML'
 });
 
-KindEditor.plugin('example1', function(K) {
-  var self = this, name = 'example1';
+let example1F = function(K) {
+  let self = this, name = 'example1';
+  console.log('self: ', self);
   self.clickToolbar(name, function() {
-    let imgData = loadCaptured();
-    let imgHtml = `<img src="${imgData}" alt="当前截图" />`
-    self.insertHtml(imgHtml);
+    let updateImg = function() {
+      let imgData = loadCaptured();
+      let imgHtml = `<img src="${imgData}" alt="当前截图" />`
+      self.insertHtml(imgHtml);
+    };
+    updateImg();
   });
-});
+};
 
+KindEditor.plugin('example1', example1F);
 
 KindEditor.ready(function(K) {
   K.create('#content1', {
