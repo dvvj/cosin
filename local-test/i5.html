@@ -5,45 +5,33 @@
     <!-- META -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="html2canvas.min.js"></script>
-    <script src="kindeditor-min.js"></script>
 
-<style>
-.ke-icon-example1 {
-				background-image: url(themes/default/default.png);
-				background-position: 0px -672px;
-				width: 16px;
-				height: 16px;
-			}
-</style>
 <script type="text/javascript">
-			// 自定义插件 #1
-			KindEditor.lang({
-				example1 : '插入HTML'
-			});
-			KindEditor.plugin('example1', function(K) {
-				var self = this, name = 'example1';
-				self.clickToolbar(name, function() {
-					self.insertHtml('<strong>测试内容</strong>');
-				});
-			});
 
+let initUserInfo = function (userInfo) {
+  console.log(userInfo);
+  window.userInfo = userInfo;
+};
 
-KindEditor.ready(function(K) {
-  K.create('#content1', {
-    items : ['example1']
-  });
+initUserInfo({ name: 'user1', company: 'company1' });
+
+let storageObj = localStorage;
+let doCapture = function() {
+html2canvas(document.body).then(function(canvas) {
+    //document.body.appendChild(canvas);
+  storageObj.setItem('screenCaptured', canvas.toDataURL());
 });
-</script>
+};
 
-</head>
+console.log("storage: ", storageObj);
+</script>
 <body>
+<input type='button' value='capture' onclick='doCapture();' />
+<input type='button' value='new window' onclick='window.open("https://localhost/i5_1.html")' />
 
 <div id="capture" style="padding: 10px; background: #f5da55">
     <h4 style="color: #000; ">Hello world!</h4>
 </div>
-KindEditor演示: 自定义插件
-
-<textarea id="content1" name="content" style="width:700px;height:200px;visibility:hidden;"></textarea>
-
+web storage tests
 </body>
 </html>
