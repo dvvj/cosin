@@ -20,14 +20,19 @@
 let storageObj = localStorage;
 let screenCapKey = 'screenCaptured';
 let loadCaptured = function() {
-  console.log("storage: ", storageObj);
   let dataURL = storageObj.getItem(screenCapKey);
   console.log('dataURL: ', dataURL);
-//  let img = new Image;
-//  img.src = dataURL;
   storageObj.removeItem(screenCapKey);
   console.log("storage after removeItem: ", storageObj);
   return dataURL;
+};
+
+let capCmd = 'captureScreen';
+var index = 1;
+let sendCapCmd = function() {
+  console.log('in sendCapCmd', storageObj);
+  index += 1
+  storageObj.setItem(capCmd, index);
 };
 
 //window.addEventListener('storage', function(e) {
@@ -43,12 +48,18 @@ KindEditor.lang({
 let example1F = function(K) {
   let self = this, name = 'example1';
   console.log('self: ', self);
+  let updateImg = function() {
+    let imgData = loadCaptured();
+    let imgHtml = `<img src="${imgData}" alt="当前截图" />`
+    self.insertHtml(imgHtml);
+  };
   self.clickToolbar(name, function() {
-    let updateImg = function() {
-      let imgData = loadCaptured();
-      let imgHtml = `<img src="${imgData}" alt="当前截图" />`
-      self.insertHtml(imgHtml);
-    };
+    console.log('clicked');
+    //updateImg();
+    sendCapCmd();
+  });
+  window.addEventListener('storage', function(e) {
+    console.log('storage event in KE: ', e);
     updateImg();
   });
 };

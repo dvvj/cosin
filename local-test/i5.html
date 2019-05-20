@@ -23,7 +23,18 @@ html2canvas(document.body).then(function(canvas) {
 });
 };
 
-console.log("storage: ", storageObj);
+//console.log("storage: ", storageObj);
+
+let capCmd = 'captureScreen';
+window.addEventListener('storage', function(e) {
+ console.log('storage event (window): ', e);
+ let cmd = storageObj.getItem(capCmd);
+ if (cmd > 1) {
+   doCapture();
+   storageObj.removeItem(capCmd);
+ }
+});
+
 </script>
 <body>
 <input type='button' value='capture' onclick='doCapture();' />
