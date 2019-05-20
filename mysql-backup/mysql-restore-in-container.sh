@@ -1,1 +1,1 @@
-mysql -uroot -p123456 < /app-backup/$1
+mysql -uroot -p123456 < /backup/$1
