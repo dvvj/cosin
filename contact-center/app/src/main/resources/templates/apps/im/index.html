@@ -14,16 +14,58 @@
     <link rel="stylesheet" id="skin" type="text/css" href="/im/css/default/ukefu.css">
     <!-- kindeditor -->
     <link rel="stylesheet" type="text/css" href="/im/js/kindeditor/themes/default/default.css">
+
+	<style>
+		.ke-icon-screencapture {
+			background-image: url(/im/js/kindeditor/themes/default/default.png);
+			background-position: 0px -672px;
+			width: 16px;
+			height: 16px;
+        }
+	</style>
     
     <script src="/js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="/im/js/kindeditor/kindeditor.js"></script>
-    <script type="text/javascript" src="/im/js/kindeditor/lang/zh-CN.js"></script>
+	<script type="text/javascript" src="/im/js/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="/im/js/kindeditor/lang/zh-CN.js"></script>
+	<script type="text/javascript" src="/js/tab-channel/tab-channel.js"></script>
     <script src="/im/js/socket.io.js"></script>
     <script type="text/javascript">
 		var editor , words;
 		var newmessage = [] , ring = [];
 		newmessage['mp3'] = '/images/message.mp3';
 		ring['mp3'] = '/images/ring.mp3';
+
+		let registerChannel = function(updateImg) {
+			let channelId = 'tc-mvSRB6WqbyqaThxg';
+			//let channelCfg = {id: channelId};
+			let channelCfg = {id: channelId, proxyOrigin: 'https://localhost:8043', proxyPath: '/js/tab-channel/proxy.html' };
+			let channel = new TabsChannel(channelCfg);
+			channel.onReceive = updateImg;
+			window._tabChannel = channel;
+		}
+
+		// 自定义插件 #1
+		KindEditor.lang({
+		  screencapture : '浏览器窗口截图'
+		});
+		let screenCapPluginName = 'screencapture';
+		KindEditor.plugin(screenCapPluginName, function(K) {
+		  let self = this, name = screenCapPluginName;
+		  //console.log('self: ', self);
+		  let updateImg = function(imgData) {
+			let imgHtml = "<img src=" + imgData + " alt=当前截图 />";
+			self.insertHtml(imgHtml);
+		  };
+		  self.clickToolbar(name, function() {
+		  	if (typeof window._tabChannel == 'undefined')
+		  		registerChannel(updateImg);
+		  	let reqImgCmd = 'tc-cmd-eCLlfJBErYJTKvsg';
+		    window._tabChannel.send(reqImgCmd);
+		  	console.log('cmd sent: ', reqImgCmd);
+		  });
+		});
+
+
         KindEditor.ready(function (K) {
             editor = K.create('textarea[name="content"]', {
                 autoHeightMode: false,
@@ -38,44 +80,49 @@
                 allowImageRemote:false,
 				filterMode:true,
                 //items: ['emoticons', 'image', 'insertfile'],
-				items: ['emoticons', 'image'],
+				items: ['emoticons', 'image', screenCapPluginName],
 				htmlTags: {img : ['src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border'] , br:[]}  ,
 				afterChange : function() {
 					var count = this.count() ;
 					var limitNum = <#if inviteData.maxwordsnum gt 0>${inviteData.maxwordsnum}<#else>300</#if>;  //设定限制字数
 					var pattern = '还可以输入' + limitNum + '字'; 
 					var strValue = this.html();
-					if(count > limitNum) {
-						pattern = ('字数超过限制，请适当删除部分内容');
-						//超过字数限制自动截取			 						
-						strValue = strValue.substring(0,limitNum);
-						editor.html(strValue);      
-					} else {
-						//计算剩余字数
-						var result = limitNum - this.count(); 
-						pattern = '还可以输入' +  result + '字'; 
-						if(result < 20){
-							document.getElementById('surplus').style.color = "red" ;	
-						}else{
-							document.getElementById('surplus').style.color = "#000000" ;								
+					if (!strValue.startsWith('<img')) {
+						if(count > limitNum) {
+							pattern = ('字数超过限制，请适当删除部分内容');
+							//超过字数限制自动截取
+							strValue = strValue.substring(0,limitNum);
+							editor.html(strValue);
+						} else {
+							//计算剩余字数
+							var result = limitNum - this.count();
+							pattern = '还可以输入' +  result + '字';
+							if(result < 20){
+								document.getElementById('surplus').style.color = "red" ;
+							}else{
+								document.getElementById('surplus').style.color = "#000000" ;
+							}
 						}
+						if(this.count("text") == 0){
+							strValue= "" ;
+						}
+						if(words != this.count("text")){
+							socket.emit('message', {
+									appid : "${appid!''}",
+									userid:"${userid!''}",
+									type:"writing",
+									session:"${sessionid!''}",
+									orgi:"${orgi!''}",
+									message : strValue
+							});
+						}
+						words = this.count("text") ;
+						document.getElementById('surplus').innerHTML = count+"/"+limitNum+" , " + pattern; //输入显示
+						 ////////
 					}
-					if(this.count("text") == 0){
-						strValue= "" ;	
+					else {
+						console.log('<img> tag found, ignoring length...');
 					}
-					if(words != this.count("text")){
-						socket.emit('message', {
-								appid : "${appid!''}",
-								userid:"${userid!''}",
-								type:"writing",
-								session:"${sessionid!''}",
-								orgi:"${orgi!''}",
-								message : strValue
-						});
-					}
-					words = this.count("text") ;
-					document.getElementById('surplus').innerHTML = count+"/"+limitNum+" , " + pattern; //输入显示
-					 ////////
 				},
 				afterCreate : function() { //设置编辑器创建后执行的回调函数
 		            var self = this;

@@ -4,16 +4,42 @@
 <head>
     <!-- META -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="html2canvas.min.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+
+    <script defer="true" src="https://localhost:8043/im/104eac.html"></script>
+</head>
+<body>
+
 <script type="text/javascript">
 let initUserInfo = function (userInfo) {
   console.log(userInfo);
   window.userInfo = userInfo;
 };
-//initUserInfo({ name: 'user1', company: 'company1' });
+initUserInfo({ name: 'user1', company: 'company1' });
+
+                let channelId = 'tc-mvSRB6WqbyqaThxg';
+let channelCfg = {id: channelId, proxyOrigin: 'https://localhost:8043', proxyPath: '/js/tab-channel/proxy.html' };
+//let channelCfg = {id: channelId};
+                let _channel = new TabsChannel(channelCfg);
+
+let doCapture = function() {
+  html2canvas(document.body).then(function(canvas) {
+    //storageObj.setItem(capturedScreenName, canvas.toDataURL());
+    //document.body.appendChild(canvas);
+console.log('capturing!');
+    _channel.send(canvas.toDataURL());
+  });
+};
+                          _channel.onReceive = function(req) {
+console.log('msg received!');
+                            doCapture();
+                          };
 </script>
-    <script defer="true" src="http://localhost:8035/im/104eac.html"></script>
-</head>
-<body>
+
+<div id="capture" style="padding: 10px; background: #f5da55">
+    <h4 style="color: #000; ">Hello world!</h4>
+</div>
 春松客服演示客户端
 
 </body>
